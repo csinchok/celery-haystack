@@ -40,7 +40,7 @@ class CelerySearchIndex(indexes.SearchIndex):
         signals.post_delete.disconnect(self._enqueue_delete, sender=model, dispatch_uid=CelerySearchIndex)
 
     def _enqueue_save(self, instance, **kwargs):
-        if not getattr(instance, 'skip_indexing', False):
+        if self.index_queryset().filter(pk=instance.pk):
             self.enqueue_save(instance, **kwargs)
 
     def _enqueue_delete(self, instance, **kwargs):
