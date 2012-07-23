@@ -42,6 +42,9 @@ class CelerySearchIndex(indexes.SearchIndex):
     def _enqueue_save(self, instance, **kwargs):
         if self.index_queryset().filter(pk=instance.pk):
             self.enqueue_save(instance, **kwargs)
+        else:
+            # It's not in the index, delete it
+            self.enqueue_delete(instance, **kwargs)
 
     def _enqueue_delete(self, instance, **kwargs):
         if not getattr(instance, 'skip_indexing', False):
